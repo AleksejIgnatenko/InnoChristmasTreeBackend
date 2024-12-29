@@ -1,5 +1,6 @@
 ﻿using InnoChristmasTree.Contracts;
 using InnoChristmasTree.Entities;
+using InnoChristmasTree.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoChristmasTree.GraphQL
@@ -7,10 +8,15 @@ namespace InnoChristmasTree.GraphQL
     public class GraphQLSubscription
     {
         [Subscribe]
-        public async Task<CongratulationResponse> SubscribeToAddCongratulationAsync([Service] InnoChristmasTreeDbContext context, [EventMessage] CongratulationEntity congratulationEntity)
+        public CongratulationResponse SubscribeToAddCongratulation(
+            [Service] InnoChristmasTreeDbContext context,
+            [EventMessage] CongratulationEventDataModel eventData)
         {
-            var countCongratulation = await context.Congratulations.CountAsync(c => c.Icon.Equals(congratulationEntity.Icon));
-            return new CongratulationResponse(congratulationEntity.Id, congratulationEntity.Icon, congratulationEntity.CongratulationText, countCongratulation);
+            return new CongratulationResponse(
+                eventData.CongratulationEntity.Id,
+                eventData.CongratulationEntity.Icon,
+                eventData.CongratulationEntity.CongratulationText,
+                eventData.CountCongratulation);
         }
     }
 }

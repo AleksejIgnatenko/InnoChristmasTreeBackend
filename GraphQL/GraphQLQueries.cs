@@ -13,11 +13,11 @@ namespace InnoChristmasTree.GraphQL
                 .OrderBy(c => c.Icon)
                 .ToListAsync();
 
-            // Группируем по иконке и создаем список для каждой группы
             var groupedCongratulations = congratulationEntities
                 .GroupBy(c => c.Icon)
                 .Select(g => new CongratulationGroupModel
                 {
+                    Icon = g.Key,
                     Count = g.Count(),
                     Congratulations = g.Select(entity => new CongratulationModel
                     {

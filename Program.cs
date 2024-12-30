@@ -44,7 +44,7 @@ app.MapGraphQL("/graphql");
 app.UseCors(x =>
 {
     x.WithHeaders().AllowAnyHeader();
-    x.WithOrigins("http://localhost:3000");
+    x.WithOrigins("https://aleksejignatenko.github.io");
     x.WithMethods().AllowAnyMethod();
 });
 

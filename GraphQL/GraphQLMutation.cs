@@ -3,6 +3,7 @@ using InnoChristmasTree.Contracts;
 using InnoChristmasTree.Entities;
 using InnoChristmasTree.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace InnoChristmasTree.GraphQL
 {
@@ -14,35 +15,45 @@ namespace InnoChristmasTree.GraphQL
             _eventSender = eventSender;
         }
 
+        //Создание нового поздравления
         public async Task<CongratulationResponse> CreateCongratulationAsync([Service] InnoChristmasTreeDbContext context, string icon, string congratulationText)
         {
-            // Создаем новую сущность поздравления
+            // Создание модели поздравления
+            var (errors, congratulation) = CongratulationModel.Create(Guid.NewGuid(), icon, congratulationText);
+            if (errors.Count > 0)
+            {
+                var result = JsonSerializer.Serialize(new { error = errors });
+
+                throw new Exception(result);
+            }
+
+            // Создание сущности поздравления
             var congratulationEntity = new CongratulationEntity
             {
-                Id = Guid.NewGuid(),
-                Icon = icon,
-                CongratulationText = congratulationText
+                Id = congratulation.Id,
+                Icon = congratulation.Icon,
+                CongratulationText = congratulation.CongratulationText,
             };
 
-            // Добавляем новую сущность в контекст и сохраняем изменения
+            // Добавление новой сущности в контекст и сохрание изменений
             await context.Congratulations.AddAsync(congratulationEntity);
             await context.SaveChangesAsync();
 
+            // Получение всех поздравлений из бд
             var congratulationEntities = await context.Congratulations
                 .OrderBy(c => c.Icon)
                 .ToListAsync();
 
+            // Группировка и создание модели поздравления
             var groupedCongratulations = congratulationEntities
                 .GroupBy(c => c.Icon)
                 .Select(g => new CongratulationGroupModel
                 {
                     Icon = g.Key,
                     Count = g.Count(),
-                    Congratulations = g.Select(entity => new CongratulationModel
+                    Congratulations = g.Select(entity =>
                     {
-                        Id = entity.Id,
-                        Icon = entity.Icon,
-                        CongratulationText = entity.CongratulationText
+                        return CongratulationModel.Create(entity.Id, entity.Icon, entity.CongratulationText, false).congratulation;
                     }).ToArray()
                 })
                 .ToList();

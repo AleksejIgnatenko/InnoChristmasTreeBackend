@@ -1,12 +1,11 @@
 ﻿using InnoChristmasTree.Contracts;
-using InnoChristmasTree.Entities;
 using InnoChristmasTree.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace InnoChristmasTree.GraphQL
 {
     public class GraphQLSubscription
     {
+        // Подписка на добавление нового поздравления
         [Subscribe]
         public CongratulationResponse SubscribeToAddCongratulation(
             [Service] InnoChristmasTreeDbContext context,

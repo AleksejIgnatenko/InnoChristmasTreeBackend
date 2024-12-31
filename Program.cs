@@ -11,16 +11,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Db
 builder.Services.AddDbContext<InnoChristmasTreeDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// Настройка GraphQL
 builder.Services.AddGraphQLServer()
     .AddQueryType<GraphQLQueries>()
     .AddMutationType<GraphQLMutation>()
     .AddSubscriptionType<GraphQLSubscription>()
-    .AddInMemorySubscriptions();
+    .AddInMemorySubscriptions()
+    .AddProjections();
 
 var app = builder.Build();
 
@@ -39,6 +42,7 @@ app.MapControllers();
 
 app.UseWebSockets();
 
+// Endpoint GraphQL API
 app.MapGraphQL("/graphql");
 
 app.UseCors(x =>
@@ -47,5 +51,12 @@ app.UseCors(x =>
     x.WithOrigins("https://aleksejignatenko.github.io");
     x.WithMethods().AllowAnyMethod();
 });
+
+//app.UseCors(x =>
+//{
+//    x.WithHeaders().AllowAnyHeader();
+//    x.WithOrigins("http://localhost:3000");
+//    x.WithMethods().AllowAnyMethod();
+//});
 
 app.Run();

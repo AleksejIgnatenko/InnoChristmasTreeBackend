@@ -1,7 +1,7 @@
 ﻿using InnoChristmasTree.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace InnoChristmasTree
+namespace InnoChristmasTree.Data
 {
     public class InnoChristmasTreeDbContext : DbContext
     {

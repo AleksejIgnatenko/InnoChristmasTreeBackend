@@ -1,5 +1,8 @@
-using InnoChristmasTree;
+using InnoChristmasTree.Abstractions;
+using InnoChristmasTree.Data;
 using InnoChristmasTree.GraphQL;
+using InnoChristmasTree.Repositories;
+using InnoChristmasTree.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +19,9 @@ builder.Services.AddDbContext<InnoChristmasTreeDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddScoped<ICongratulationService, CongratulationService>();
+builder.Services.AddScoped<ICongratulationRepository, CongratulationRepository>();
 
 // Настройка GraphQL
 builder.Services.AddGraphQLServer()
@@ -45,18 +51,18 @@ app.UseWebSockets();
 // Endpoint GraphQL API
 app.MapGraphQL("/graphql");
 
-app.UseCors(x =>
-{
-    x.WithHeaders().AllowAnyHeader();
-    x.WithOrigins("https://aleksejignatenko.github.io");
-    x.WithMethods().AllowAnyMethod();
-});
-
 //app.UseCors(x =>
 //{
 //    x.WithHeaders().AllowAnyHeader();
-//    x.WithOrigins("http://localhost:3000");
+//    x.WithOrigins("https://aleksejignatenko.github.io");
 //    x.WithMethods().AllowAnyMethod();
 //});
+
+app.UseCors(x =>
+{
+    x.WithHeaders().AllowAnyHeader();
+    x.WithOrigins("http://localhost:3000");
+    x.WithMethods().AllowAnyMethod();
+});
 
 app.Run();

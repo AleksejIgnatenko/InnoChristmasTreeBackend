@@ -16,6 +16,10 @@ namespace InnoChristmasTree.Models
             CongratulationText = congratulationText;
         }
 
+        public CongratulationModel()
+        {
+        }
+
         // Метод для создания модели поздравления
         public static (Dictionary<string, string> errors, CongratulationModel congratulation) Create(Guid id, string icon, string congratulationText, bool useValidation = true)
         {

@@ -1,10 +1,8 @@
-﻿using InnoChristmasTree.Entities;
-
-namespace InnoChristmasTree.Models
+﻿namespace InnoChristmasTree.Models
 {
     public class CongratulationEventDataModel
     {
-        public CongratulationEntity CongratulationEntity { get; set; } = new CongratulationEntity();
+        public CongratulationModel CongratulationModel { get; set; } = new CongratulationModel();
         public int CountCongratulation { get; set; }
     }
 }
